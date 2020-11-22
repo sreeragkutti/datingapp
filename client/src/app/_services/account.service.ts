@@ -1,5 +1,5 @@
 import { JsonPipe } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ReplaySubject } from 'rxjs';
 import {map} from 'rxjs/operators';
@@ -27,6 +27,18 @@ export class AccountService {
           }
         })
       )
+  }
+
+  register(model: any){
+    return this.http.post<User>(this.baseUrl + 'Account/register', model)
+      .pipe(
+        map((response: User ) => {
+          const user: User = response;
+          localStorage.setItem('user',JSON.stringify(user));
+          this.currentUserSource.next(user);
+          return user;
+        })
+      );
   }
 
   setCurrentUser(user: User){
