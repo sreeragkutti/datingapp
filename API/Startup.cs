@@ -30,7 +30,7 @@ namespace API
         {
             app.UseMiddleware<ExceptionMiddleware>();
 
-            app.UseHttpsRedirection();
+           // app.UseHttpsRedirection();
 
             app.UseRouting();
 
