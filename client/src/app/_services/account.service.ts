@@ -1,18 +1,19 @@
 import { JsonPipe } from '@angular/common';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ReplaySubject } from 'rxjs';
 import {map} from 'rxjs/operators';
+import { environment } from 'src/environments/environment';
 import { User } from '../_modules/user';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AccountService {
-  baseUrl: string = "http://localhost:5000/api/";
+  baseUrl: string = environment.apiUrl;
 
-  private currentUserSource = new ReplaySubject<User | null>(1);
-  currentUserSource$ =this.currentUserSource.asObservable();
+  private currentUserSource = new ReplaySubject<User>(1);
+  currentUserSource$ = this.currentUserSource.asObservable();
 
   constructor(private http: HttpClient) { }
 
@@ -47,6 +48,6 @@ export class AccountService {
 
   logout(){
     localStorage.removeItem('user');
-    this.currentUserSource.next(null);
+    this.currentUserSource.next();
   }
 }

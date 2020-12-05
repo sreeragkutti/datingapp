@@ -31,7 +31,7 @@
             </div>
         </div>
 
-        <form *ngIf="(accountService.currentUserSource$ | async) === null" #loginForm="ngForm" class="form-inline mt-2 mt-md-0" (ngSubmit)="login()" >
+        <form *ngIf="(accountService.currentUserSource$ | async) == null" #loginForm="ngForm" class="form-inline mt-2 mt-md-0" (ngSubmit)="login()" >
             <input class="form-control mr-sm-2"
                 type="text" 
                 placeholder="Username"
