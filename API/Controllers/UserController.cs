@@ -15,18 +15,19 @@ namespace API.Controllers
     [Authorize]
     public class UserController : BaseApiController
     {
-        private readonly IUserRepository _userRepository;
+        private readonly IUnitOfWork _unitOfWork;
+
         private readonly IMapper _mapper;
-        public UserController(IUserRepository userRepository, IMapper mapper)
+        public UserController(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _userRepository = userRepository;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
-        [HttpGet]        
+        [HttpGet]
         public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers()
         {
-            var users = await _userRepository.GetMembersAsync();
+            var users = await _unitOfWork.UserRepository.GetMembersAsync();
 
             return Ok(users);
         }
@@ -34,7 +35,7 @@ namespace API.Controllers
         [HttpGet("{username}")]
         public async Task<ActionResult<MemberDto>> GetUsers(string username)
         {
-            var user = await _userRepository.GetMemberAsync(username);
+            var user = await _unitOfWork.UserRepository.GetMemberAsync(username);
 
             return Ok(user);
         }
@@ -43,15 +44,15 @@ namespace API.Controllers
         public async Task<ActionResult> UpdateUser(MemberUpdateDto memberUpdateDto)
         {
             var username = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var user = await _userRepository.GetUserByUsernameAsync(username);
+            var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(username);
 
             _mapper.Map(memberUpdateDto, user);
-            _userRepository.Update(user);
-            
-            if(await _userRepository.SaveAllAsync()) return Ok();
+            _unitOfWork.UserRepository.Update(user);
+
+            if (await _unitOfWork.Complete()) return Ok();
 
             return BadRequest();
-            
+
         }
     }
 }
