@@ -1,0 +1,125 @@
+using CsvHelper;
+using CsvHelper.Configuration;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Text;
+
+ 
+
+ 
+
+namespace PdfMetadataExtractor {
+    public sealed class CsvModel {
+        public int Id {
+            get;
+            set;
+        }
+        public string Name {
+            get;
+            set;
+        }
+    }
+
+ 
+
+ 
+
+    public sealed class CsvModelMap: ClassMap < CsvModel > {
+        public CsvModelMap() {
+            Map(m => m.Id).Index(0).Name("ThisIsMyCustomNameForIdColumn");
+            Map(m => m.Name).Index(1).Name("ThisIsMyCustomNameForNameColumn");
+        }
+    }
+
+ 
+
+ 
+
+    static class CsvGenerator {
+        public static string BuildAndGenerate() {
+            List < CsvModel > records = new List < CsvModel > {
+                new CsvModel {
+                    Id = 1234, Name = "ABCDGE"
+                },
+                new CsvModel {
+                    Id = 535634, Name = "OINOIWNDW"
+                },
+            };
+
+ 
+
+ 
+
+            StringBuilder sb = new StringBuilder();
+
+ 
+
+ 
+
+            using(var writer = new StringWriter(sb)) {
+                using(var csv = new CsvWriter(writer, CultureInfo.InvariantCulture)) {
+                    csv.Context.RegisterClassMap < CsvModelMap > ();
+
+ 
+
+ 
+
+                    csv.WriteHeader < CsvModel > ();
+                    csv.NextRecord();
+                    foreach(var record in records) {
+                        csv.WriteRecord(record);
+                        csv.NextRecord();
+                    }
+                }
+            }
+
+ 
+
+ 
+
+            return sb.ToString();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------
+private FileContentResult CreateArticleListCsvFile(Modal list)
+        {
+
+            MemoryStream? mem = new MemoryStream();
+
+            using (StreamWriter writer = new StreamWriter(mem, Encoding.UTF8))
+            using (CsvWriter csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+            {
+                csv.Context.Configuration.IncludePrivateMembers = true; 
+                
+                
+                csv.Context.RegisterClassMap(csvMapModel);
+
+                csv.WriteHeader<csvmodel>();
+                csv.NextRecord();
+                foreach (var row in list))
+                {
+                    csv.WriteRecord(row )
+                    csv.NextRecord();
+                }
+            }
+
+            byte[] result = Encoding.UTF8.GetPreamble().Concat(mem.ToArray()).ToArray();
+
+            HttpContext.Response.Headers.Add("Access-Control-Expose-Headers", "Content-Disposition");
+
+            return File(result, "text/csv", $"{export.csv");
+        }
